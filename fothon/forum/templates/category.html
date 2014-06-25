@@ -1,0 +1,24 @@
+<a href='../topic/{{ category_id }}/new'>New Topic</a>
+{% if topics|length == 0 %}
+<div><span>There is no topics in this category</span></div>
+{% else %}
+<table>
+<tr>
+    <td>Title</td>
+    <td>Posts</td>
+    <td>Last Post</td>
+</tr>
+
+{% for topic in topics %}
+    <tr>
+        <td><a href='../topic/{{ topic.pk }}'>{{ topic.title }}</a></td>
+        <td>{{ topic.posts }}</td>
+        <td>
+            <div>{{ topic.last_modified_from.username }}</div>
+            <div>{{ topic.last_modified }}</div>
+        </td>
+    </tr>
+{% endfor %}
+
+</table>
+{% endif %}

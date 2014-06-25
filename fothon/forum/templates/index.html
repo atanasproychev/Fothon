@@ -1,0 +1,10 @@
+{% for category in main_category.category_set.get_queryset %}
+    <div>
+        <span>{{ category.title }}</span>
+        {% for subcategory in category.category_set.get_queryset %}
+            <div>
+                <span><a href="{{ subcategory.pk }}" >{{ subcategory.title }}</a></span>
+            </div>
+        {% endfor %}
+    </div>
+{% endfor %}
