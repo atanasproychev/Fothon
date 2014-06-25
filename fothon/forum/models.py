@@ -21,10 +21,10 @@ class ForumUser(User):
 class Category(models.Model):
     title = models.CharField(max_length=100)
     order = models.IntegerField()
-    parent = models.ForeignKey('self')
+    parent = models.ForeignKey('self', null=True)
 
     def __str__(self):
-        return "%d.%s".format(self.order, self.title)
+        return "{0}.{1}".format(self.order, self.title)
 
 
 class Topic(models.Model):
@@ -36,8 +36,11 @@ class Topic(models.Model):
     last_modified_from = models.ForeignKey('ForumUser',
                                            related_name="last_modified_from")
 
+    def posts(self):
+        return len(self.post_set.values())
+    
     def __str__(self):
-        return "%s > %s".format(self.category, self.title)
+        return "{0} > {1}".format(self.category, self.title)
 
 
 class Post(models.Model):
@@ -48,4 +51,4 @@ class Post(models.Model):
     topic = models.ForeignKey('Topic')
 
     def __str__(self):
-        return "%s > %s".format(self.topic, self.text)
+        return "{0} > {1}".format(self.topic, self.text)
