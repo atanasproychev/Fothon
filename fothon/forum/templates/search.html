@@ -1,0 +1,41 @@
+<form action="/fothon/search/" method="post"> {% csrf_token %}
+{{ form.as_p }}
+<input type="submit" value="Search" />
+</form>
+
+{% if search_result|length >= 0 %}
+<h1>Търсене за "{{ search_text }}"</h1>
+{% if search_result|length == 0 %}
+<p>Няма намерени резултати.</p>
+{% else %}
+<table>
+    {% if type == 'post' %}
+    {% for post in search_result %}
+    <table>
+    <tr>
+        <td>Topic: <a href='../topic/{{ topic.pk }}'>{{ post.topic.title }}</a></td>
+    <tr>
+        <td>author: <a href='../topic/{{ topic.pk }}'>{{ post.author.username }}</a></td>
+        <td>Created at: {{ post.created_at }}</td>
+    </tr>
+    <tr>
+        <td>{{ post.text|linebreaksbr }}</td>
+    </tr>
+    </table>
+    {% endfor %}
+    {% elif type == 'topic' %}
+    {% for topic in search_result %}
+    <tr>
+    <td><a href='../topic/{{ topic.pk }}'>{{ topic.title }}</a></td>
+    </tr>
+    {% endfor %}
+    {% elif type == 'category' %}
+    {% for category in search_result %}
+    <tr>
+    <td><a href='../{{ category.pk }}'>{{ category.title }}</a></td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+</table>
+{% endif %}
+{% endif %}

@@ -23,3 +23,13 @@ class ProfileForm(forms.Form):
 class NewContentForm(forms.Form):
     content = forms.CharField(widget=forms.Textarea, min_length=1)
     
+class SearchForm(forms.Form):
+    types = [
+        ('post', 'съдържание'),
+        ('topic', 'заглавие'),
+        ('category', 'категория'),
+    ]
+    search_field = forms.CharField(min_length=2)
+    type = forms.ChoiceField(choices=types)
+    author_username = forms.CharField(required=False)
+    date_field = forms.DateField(required=False)

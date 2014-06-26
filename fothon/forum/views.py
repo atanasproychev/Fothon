@@ -7,6 +7,7 @@ from forum.forms import LoginForm
 from forum.forms import RegisterForm
 from forum.forms import ProfileForm
 from forum.forms import NewContentForm
+from forum.forms import SearchForm
 from forum.models import ForumUser
 from forum.models import Category
 from forum.models import Topic
@@ -41,16 +42,17 @@ def new_content_view(request, content_type, content_id):
             content = request.POST['content']
             user = ForumUser.objects.get(username=request.user.username)
             if content_type == 'topic':
-                attr = 'title'
-                parent = 'category_id'
                 Topic.objects.create(title=content, category_id=content_id, author=user, last_modified_from=user)
             elif content_type == 'post':
-                attr = 'text'
-                parent = 'topic_id'
-                Post.objects.create(text=content, topic_id=content_id, author=user)
+                post = Post.objects.create(text=content, topic_id=content_id, author=user)
+                topic = Topic.objects.get(pk=content_id)
+                topic.last_modified = post.created_at
+                topic.last_modified_from = post.author
+                topic.save()
             print(dir(request))
             print(request.REQUEST)
-            return redirect(request.REQUEST.back)
+            # return redirect(request.REQUEST.back)
+            return redirect('/fothon')
     else:
         print(request.REQUEST)
         form = NewContentForm()
@@ -125,3 +127,28 @@ def profile_view(request):
         
     return render(request, 'profile.html', locals())
     
+def search_view(request):
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if form.is_valid():
+            search_text = request.POST['search_field']
+            type = request.POST['type']
+            search_result = []
+            if type == 'post':
+                un = 'nasko2'
+                search_result = Post.objects.filter(text__icontains=search_text)
+            elif type == 'topic':
+                search_result = Topic.objects.filter(title__contains=search_text)
+            elif type == 'category':
+                search_result = Category.objects.filter(title__contains=search_text)
+                
+            if type != 'category':
+                if request.POST['author_username']:
+                    search_result = search_result.filter(author__username=request.POST['author_username'])
+                if request.POST['date_field']:
+                    search_result = search_result.filter(created_at__gt=request.POST['date_field'])
+    else:
+        print(request.REQUEST)
+        form = SearchForm()
+    
+    return render(request, 'search.html', locals())
