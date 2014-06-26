@@ -49,10 +49,10 @@ def new_content_view(request, content_type, content_id):
                 topic.last_modified = post.created_at
                 topic.last_modified_from = post.author
                 topic.save()
-            print(dir(request))
-            print(request.REQUEST)
+            print(dir(request.REQUEST))
+            # print(request.REQUEST.back)
             # return redirect(request.REQUEST.back)
-            return redirect('/fothon')
+            return redirect(request.REQUEST['back'])
     else:
         print(request.REQUEST)
         form = NewContentForm()

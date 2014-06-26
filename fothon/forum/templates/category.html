@@ -1,4 +1,4 @@
-<a href='../topic/{{ category_id }}/new'>New Topic</a>
+<a href='../topic/{{ category_id }}/new?back={{ request.path }}'>New Topic</a>
 {% if topics|length == 0 %}
 <div><span>There is no topics in this category</span></div>
 {% else %}
