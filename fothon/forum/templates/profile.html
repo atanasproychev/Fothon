@@ -1,12 +1,47 @@
-<!DOCTYPE>
-<html>
-<head>
-<title>Profile</title>
-</head>
-<body>
-<form action="/fothon/profile/" method="post"> {% csrf_token %}
-{{ form.as_p }}
-<input type="submit" value="Register" />
+<table>
+    <tr>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Потребителско име</td>
+        <td>{{ user.username }}</td>
+    </tr>
+    <tr>
+        <td>Име</td>
+        <td>{{ user.first_name }}</td>
+    </tr>
+    <tr>
+        <td>Фамилия</td>
+        <td>{{ user.last_name }}</td>
+    </tr>
+    <tr>
+        <td>E-mail</td>
+        <td>{{ user.email }}</td>
+    </tr>
+    <tr>
+        <td>Дата на присъединяване</td>
+        <td>{{ user.data_joined }}</td>
+    </tr>
+    <tr>
+        <td>Снимка</td>
+        <td>{{ user.picture }}</td>
+    </tr>
+    <tr>
+        <td>Пол</td>
+        <td>{{ user.gender }}</td>
+    </tr>
+    <tr>
+        <td>Град</td>
+        <td>{{ user.city }}</td>
+    </tr>
+    <tr>
+        <td>Рождена дата</td>
+        <td>{{ user.birth_date }}</td>
+    </tr>
+</table>
+{% if request.user == user %}
+<form action="/fothon/profile/change" method="get" > 
+<input type="submit" value="Change" />
 </form>
-</body>
-</html>
+{% endif %}

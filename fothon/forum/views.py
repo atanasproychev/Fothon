@@ -3,9 +3,12 @@ from django.http import HttpResponse
 
 from django.contrib.auth import authenticate, login, logout
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 from forum.forms import LoginForm
 from forum.forms import RegisterForm
 from forum.forms import ProfileForm
+from forum.forms import ProfileChangeForm
 from forum.forms import NewContentForm
 from forum.forms import SearchForm
 from forum.models import ForumUser
@@ -21,13 +24,31 @@ def index(request):
     
     return render(request, 'index.html', locals())
     
+def make_paginator(request, objects, num_items):
+    paginator = Paginator(objects, num_items)
+    page = request.GET.get('page')
+    try:
+        result = paginator.page(page)
+    except PageNotAnInteger:
+        result = paginator.page(1)
+    except EmptyPage:
+        result = paginator.page(paginator.num_pages)
+        
+    return result
+    
 def category_view(request, category_id):
     topics = Topic.objects.filter(category_id=category_id).order_by('-last_modified')
+    topics = make_paginator(request, topics, 20)
+    category = Category.objects.get(pk=category_id)
     
     return render(request, 'category.html', locals())
     
 def topic_view(request, topic_id):
     posts = Post.objects.filter(topic_id=topic_id).order_by('created_at')
+    posts = make_paginator(request, posts, 3)
+    topic = Topic.objects.get(pk=topic_id)
+    print(request.path_info)
+    print(dir(request))
     
     return render(request, 'topic.html', locals())
     
@@ -101,13 +122,11 @@ def logout_view(request):
     logout(request)
     return redirect('/fothon')
 
-def profile_view(request):
+def profile_change_view(request):
     print(request.user.username)
     u = ForumUser.objects.get(username=request.user.username)
-    d=dict(u)
-    print(d)
     if request.method == 'POST':
-        form = ProfileForm(request.POST)
+        form = ProfileChangeForm(request.POST)
         if form.is_valid():
             username = request.POST['username']
             password = request.POST['password']
@@ -121,9 +140,17 @@ def profile_view(request):
             else:
                 return HttpResponse("You are not registered!")
     else:
-        form = ProfileForm(u)
+        form = ProfileChangeForm(instance=u)
         
     print(form.as_p())
+        
+    return render(request, 'profile_change.html', locals())
+    
+def profile_view(request, username=None):
+    if not username:
+        user = request.user
+    else:
+        user = ForumUser.objects.get(username=username)
         
     return render(request, 'profile.html', locals())
     

@@ -1,3 +1,4 @@
+<a href='/fothon'>Начало</a> &gt; <a href='{{ request.path }}'>{{ category.title }}</a><br>
 <a href='../topic/{{ category_id }}/new?back={{ request.path }}'>New Topic</a>
 {% if topics|length == 0 %}
 <div><span>There is no topics in this category</span></div>
@@ -22,3 +23,19 @@
 
 </table>
 {% endif %}
+
+<div class="pagination">
+    <span class="step-links">
+        {% if topics.has_previous %}
+            <a href="?page={{ topics.previous_page_number }}">&lt; Previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ topics.number }} of {{ topics.paginator.num_pages }}.
+        </span>
+
+        {% if topics.has_next %}
+            <a href="?page={{ topics.next_page_number }}">Next &gt;</a>
+        {% endif %}
+    </span>
+</div>
