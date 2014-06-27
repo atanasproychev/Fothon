@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -18,9 +19,8 @@ from forum.models import Post
 
 
 def index(request):
-    print(dir(request))
-    #print(dir(request.user))
     main_category = Category.objects.get(title='Main')
+    is_special = request.user.groups.filter(name="SpecialUser").exists()
     
     return render(request, 'index.html', locals())
     
@@ -47,16 +47,13 @@ def topic_view(request, topic_id):
     posts = Post.objects.filter(topic_id=topic_id).order_by('created_at')
     posts = make_paginator(request, posts, 3)
     topic = Topic.objects.get(pk=topic_id)
-    print(request.path_info)
-    print(dir(request))
     
     return render(request, 'topic.html', locals())
     
+@login_required(login_url="/fothon/login")
 def new_content_view(request, content_type, content_id):
     if content_type not in ('topic', 'post'):
         return redirect('/fothon')
-    print(content_type)
-    print(content_id)
     if request.method == 'POST':
         form = NewContentForm(request.POST)
         if form.is_valid():
@@ -70,12 +67,8 @@ def new_content_view(request, content_type, content_id):
                 topic.last_modified = post.created_at
                 topic.last_modified_from = post.author
                 topic.save()
-            print(dir(request.REQUEST))
-            # print(request.REQUEST.back)
-            # return redirect(request.REQUEST.back)
             return redirect(request.REQUEST['back'])
     else:
-        print(request.REQUEST)
         form = NewContentForm()
     
     return render(request, 'new_content.html', locals())
@@ -86,7 +79,6 @@ def login_view(request):
         if form.is_valid():
             username = request.POST['username']
             password = request.POST['password']
-            print(request.POST)
             user = authenticate(username=username, password=password)
             if user and user.is_active:
                 login(request, user)
@@ -105,25 +97,25 @@ def register_view(request):
             username = request.POST['username']
             password = request.POST['password']
             email = request.POST['email']
-            #user = ForumUser.objects.get(username=username)
-            user = None
-            print(user2)
-            if user is None:
+            user_by_username = ForumUser.objects.filter(username=username)
+            user_by_email = ForumUser.objects.filter(email=email)
+            if not (user_by_username or user_by_email):
                 ForumUser.objects.create_user(username, email, password)
                 return redirect('/fothon')
             else:
-                return HttpResponse("You are not registered!")
+                return HttpResponse("Your username or email already exists!")
     else:
         form = RegisterForm()
         
     return render(request, 'register.html', locals())
     
+@login_required(login_url="/fothon/login")
 def logout_view(request):
     logout(request)
     return redirect('/fothon')
 
+@login_required(login_url="/fothon/login")
 def profile_change_view(request):
-    print(request.user.username)
     u = ForumUser.objects.get(username=request.user.username)
     if request.method == 'POST':
         form = ProfileChangeForm(request.POST)
@@ -146,6 +138,7 @@ def profile_change_view(request):
         
     return render(request, 'profile_change.html', locals())
     
+@login_required(login_url="/fothon/login")
 def profile_view(request, username=None):
     if not username:
         user = request.user
@@ -162,7 +155,6 @@ def search_view(request):
             type = request.POST['type']
             search_result = []
             if type == 'post':
-                un = 'nasko2'
                 search_result = Post.objects.filter(text__icontains=search_text)
             elif type == 'topic':
                 search_result = Topic.objects.filter(title__contains=search_text)
@@ -175,7 +167,6 @@ def search_view(request):
                 if request.POST['date_field']:
                     search_result = search_result.filter(created_at__gt=request.POST['date_field'])
     else:
-        print(request.REQUEST)
         form = SearchForm()
     
     return render(request, 'search.html', locals())
