@@ -35,6 +35,11 @@
                         <li>
 							<a href="{% url 'search' %}"><span>Търсене</span></a>
 						</li>
+                        {% if request.user.is_staff %}
+						<li>
+							<a href="/admin/"><span>Админ панел</span></a>
+						</li>
+                        {% endif %}
 					</ul>
 				</div>
 			</div>
@@ -66,13 +71,15 @@
                         <li>
 							<a href="{% url 'search' %}">Търсене</a>
 						</li>
+                        {% if request.user.is_staff %}
+						<li>
+							<a href="/admin/"><span>Админ панел</span></a>
+						</li>
+                        {% endif %}
 					</ul>
 					<p>
 						&#169; Copyright &#169; 2014.Fothon all rights reserved
 					</p>
-					<div class="connect">
-						<a href="http://freewebsitetemplates.com/go/facebook/" id="fb">facebook</a> <a href="http://freewebsitetemplates.com/go/twitter/" id="twitter">twitter</a> <a href="http://freewebsitetemplates.com/go/googleplus/" id="googleplus">googleplus</a> <a href="http://freewebsitetemplates.com/go/youtube/" id="vimeo">vimeo</a>
-					</div>
 				</div>
 			</div>
 		</div>
