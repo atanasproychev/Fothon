@@ -1,12 +1,10 @@
-<!DOCTYPE>
-<html>
-<head>
-<title>Profile</title>
-</head>
-<body>
-<form action="/fothon/profile/" method="post"> {% csrf_token %}
+{% extends "base.html" %}
+{% block title %}
+Промяна на профила | Форум
+{% endblock %}
+{% block body %}
+<form action="{% url 'profile_change' %}" method="post"> {% csrf_token %}
 {{ form.as_p }}
 <input type="submit" value="Change" />
 </form>
-</body>
-</html>
+{% endblock %}

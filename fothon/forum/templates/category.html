@@ -1,21 +1,27 @@
-<a href='/fothon'>Начало</a> &gt; <a href='{{ request.path }}'>{{ category.title }}</a><br>
-<a href='../topic/{{ category_id }}/new?back={{ request.path }}'>New Topic</a>
+{% extends "base.html" %}
+{% block title %}
+{{ category.title }} | Форум
+{% endblock %}
+{% block body %}
+<a href="{% url 'index' %}">Начало</a> &gt; <a href='{{ request.path }}'>{{ category.title }}</a><br>
+<h1>{{ category.title }}</h1>
+<a href="{% url 'new_content' 'topic' category.pk %}?back={{ request.path }}">Нова тема</a>
 {% if topics|length == 0 %}
-<div><span>There is no topics in this category</span></div>
+<div>Все още няма теми в тази категория</div>
 {% else %}
-<table>
+<table class="CSSTableGenerator">
 <tr>
-    <td>Title</td>
-    <td>Posts</td>
-    <td>Last Post</td>
+    <td>Заглавие</td>
+    <td>Брой мнения</td>
+    <td>Последно мнение</td>
 </tr>
 
 {% for topic in topics %}
     <tr>
-        <td><a href='../topic/{{ topic.pk }}'>{{ topic.title }}</a></td>
+        <td><a href="{% url 'topic' topic.pk %}">{{ topic.title }}</a></td>
         <td>{{ topic.posts }}</td>
         <td>
-            <div>{{ topic.last_modified_from.username }}</div>
+            <div><a href="{% url 'profile' topic.last_modified_from.username %}">{{ topic.last_modified_from.username }}</a></div>
             <div>{{ topic.last_modified }}</div>
         </td>
     </tr>
@@ -25,17 +31,18 @@
 {% endif %}
 
 <div class="pagination">
-    <span class="step-links">
+    <p class="step-links">
         {% if topics.has_previous %}
-            <a href="?page={{ topics.previous_page_number }}">&lt; Previous</a>
+            <a href="?page={{ topics.previous_page_number }}">&lt; Предишна</a>
         {% endif %}
 
-        <span class="current">
-            Page {{ topics.number }} of {{ topics.paginator.num_pages }}.
-        </span>
+        <p class="current">
+            Страница {{ topics.number }} от {{ topics.paginator.num_pages }}.
+        </p>
 
         {% if topics.has_next %}
-            <a href="?page={{ topics.next_page_number }}">Next &gt;</a>
+            <a href="?page={{ topics.next_page_number }}">Следваща &gt;</a>
         {% endif %}
-    </span>
+    </p>
 </div>
+{% endblock %}

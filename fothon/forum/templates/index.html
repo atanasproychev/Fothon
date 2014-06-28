@@ -1,14 +1,24 @@
+{% extends "base.html" %}
+{% block title %}
+Начало | Форум
+{% endblock %}
+{% block body %}
 {% for category in main_category.category_set.get_queryset %}
 {% if category.type == 'R' or category.type == 'S' and is_special %}
-    <div>
-        <span>{{ category.title }}</span>
+    <div class="category">
+        <span></span><h3>{{ category.title }}</h3>
         {% for subcategory in category.category_set.get_queryset %}
         {% if subcategory.type == 'R' or subcategory.type == 'S' and is_special %}
-            <div>
-                <span><a href="{{ subcategory.pk }}" >{{ subcategory.title }}</a></span>
-            </div>
+            <table>
+                <tr>
+                <td>
+                <h5><a href="{% url 'category' subcategory.pk %}" >{{ subcategory.title }}</a></h5>
+                </td>
+                </tr>
+            </table>
         {% endif %}
         {% endfor %}
     </div>
 {% endif %}
 {% endfor %}
+{% endblock %}

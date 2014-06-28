@@ -1,18 +1,24 @@
-<a href='/fothon'>Начало</a> &gt; <a href='/fothon/{{ topic.category.pk }}'>{{ topic.category.title }}</a> &gt; <a href='{{ request.path }}'>{{ topic.title }}</a><br>
-<a href='/fothon/post/{{ topic_id }}/new?back={{ request.path }}'>New Post</a>
+{% extends "base.html" %}
+{% block title %}
+{{ topic.title }} | Форум
+{% endblock %}
+{% block body %}
+<a href="{% url 'index' %}">Начало</a> &gt; <a href="{% url 'category' topic.category.pk %}">{{ topic.category.title }}</a> &gt; <a href='{{ request.path }}'>{{ topic.title }}</a><br>
+<h1>{{ topic.title }}</h1>
+<a href="{% url 'new_content' 'post' topic_id %}?back={{ request.path }}">Ново мнение</a>
 {% if posts|length == 0 %}
-<div><span>There is no posts in this topic</span></div>
+<div>Все още няма мнения в тази тема</div>
 {% else %}
-<table>
+<table class="CSSTableGenerator">
 
 {% for post in posts %}
-    <table>
+    <table class="CSSTableGenerator">
     <tr>
-        <td>author: <a href='../topic/{{ topic.pk }}'>{{ post.author.username }}</a></td>
-        <td>Created at: {{ post.created_at }}</td>
+        <td>автор: <a href="{% url 'profile' post.author.username %}">{{ post.author.username }}</a></td>
+        <td>създадено: {{ post.created_at }}</td>
     </tr>
     <tr>
-        <td>{{ post.text|linebreaksbr }}</td>
+        <td class="topic_td">{{ post.text|linebreaksbr }}</td>
     </tr>
     </table>
 {% endfor %}
@@ -21,17 +27,18 @@
 {% endif %}
 
 <div class="pagination">
-    <span class="step-links">
+    <p class="step-links">
         {% if posts.has_previous %}
-            <a href="?page={{ posts.previous_page_number }}">&lt; Previous</a>
+            <a href="?page={{ posts.previous_page_number }}">&lt; Предишна</a>
         {% endif %}
 
-        <span class="current">
-            Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
-        </span>
+        <p class="current">
+            Страница {{ posts.number }} от {{ posts.paginator.num_pages }}.
+        </p>
 
         {% if posts.has_next %}
-            <a href="?page={{ posts.next_page_number }}">Next &gt;</a>
+            <a href="?page={{ posts.next_page_number }}">Следваща &gt;</a>
         {% endif %}
-    </span>
+    </p>
 </div>
+{% endblock %}

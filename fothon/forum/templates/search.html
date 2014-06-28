@@ -1,4 +1,9 @@
-<form action="/fothon/search/" method="post"> {% csrf_token %}
+{% extends "base.html" %}
+{% block title %}
+Търсене | Форум
+{% endblock %}
+{% block body %}
+<form action="{% url 'search' %}" method="post"> {% csrf_token %}
 {{ form.as_p }}
 <input type="submit" value="Search" />
 </form>
@@ -11,31 +16,32 @@
 <table>
     {% if type == 'post' %}
     {% for post in search_result %}
-    <table>
+    <table class="CSSTableGenerator">
     <tr>
-        <td>Topic: <a href='../topic/{{ topic.pk }}'>{{ post.topic.title }}</a></td>
+        <td>Тема: <a href="{% url 'topic' post.topic.pk %}">{{ post.topic.title }}</a></td>
     <tr>
-        <td>author: <a href='../topic/{{ topic.pk }}'>{{ post.author.username }}</a></td>
-        <td>Created at: {{ post.created_at }}</td>
+        <td>автор: <a href="{% url 'profile' post.author.username %}">{{ post.author.username }}</a></td>
+        <td>създадено: {{ post.created_at }}</td>
     </tr>
     <tr>
-        <td>{{ post.text|linebreaksbr }}</td>
+        <td class="topic_td">{{ post.text|linebreaksbr }}</td>
     </tr>
     </table>
     {% endfor %}
     {% elif type == 'topic' %}
     {% for topic in search_result %}
     <tr>
-    <td><a href='../topic/{{ topic.pk }}'>{{ topic.title }}</a></td>
+    <td><a href="{% url 'topic' topic.pk %}">{{ topic.title }}</a></td>
     </tr>
     {% endfor %}
     {% elif type == 'category' %}
     {% for category in search_result %}
     <tr>
-    <td><a href='../{{ category.pk }}'>{{ category.title }}</a></td>
+    <td><a href="{% url 'category' category.pk %}">{{ category.title }}</a></td>
     </tr>
     {% endfor %}
     {% endif %}
 </table>
 {% endif %}
 {% endif %}
+{% endblock %}

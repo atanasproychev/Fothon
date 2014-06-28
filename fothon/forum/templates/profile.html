@@ -1,3 +1,8 @@
+{% extends "base.html" %}
+{% block title %}
+Профил | Форум
+{% endblock %}
+{% block body %}
 <table>
     <tr>
         <td></td>
@@ -21,11 +26,7 @@
     </tr>
     <tr>
         <td>Дата на присъединяване</td>
-        <td>{{ user.data_joined }}</td>
-    </tr>
-    <tr>
-        <td>Снимка</td>
-        <td>{{ user.picture }}</td>
+        <td>{{ user.date_joined }}</td>
     </tr>
     <tr>
         <td>Пол</td>
@@ -40,8 +41,9 @@
         <td>{{ user.birth_date }}</td>
     </tr>
 </table>
-{% if request.user == user %}
-<form action="/fothon/profile/change" method="get" > 
+{% if request.user.username == user.username %}
+<form action="{% url 'profile_change' %}" method="get" > 
 <input type="submit" value="Change" />
 </form>
 {% endif %}
+{% endblock %}
