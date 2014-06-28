@@ -7,10 +7,10 @@
     </head>
     <body>
         <div class="page">
-		<div class="header">
-			<a href="index.html" id="logo"><img src="/static/images/python_logo.png" height="148" width="146" alt="logo"></a>
-			<div>
-				<div>
+        <div class="header">
+            <a href="index.html" id="logo"><img src="/static/images/python_logo.png" height="148" width="146" alt="logo"></a>
+            <div>
+                <div>
                     {% if request.user.is_authenticated %}
                     Здравей, <b><a href="{% url 'profile' %}">{{ request.user.username }}</a></b>! <span>|</span>
                     <a href="{% url 'logout' %}">Изход</a>
@@ -18,71 +18,71 @@
                     <a href="{% url 'register' %}">Регистрация</a><span>|</span>
                     <a href="{% url 'login' %}">Вход</a>
                     {% endif %}
-				</div>
-				<div>
-					<ul>
-						<li>
-							<a href="{% url 'index' %}"><span>Начало</span></a>
-						</li>
-						<li>
-							<a href="{% url 'index' %}"><span>Форум</span></a>
-						</li>
+                </div>
+                <div>
+                    <ul>
+                        <li>
+                            <a href="{% url 'index' %}"><span>Начало</span></a>
+                        </li>
+                        <li>
+                            <a href="{% url 'index' %}"><span>Форум</span></a>
+                        </li>
                         {% if request.user.is_authenticated %}
-						<li>
-							<a href="{% url 'profile' %}"><span>Профил</span></a>
-						</li>
+                        <li>
+                            <a href="{% url 'profile' %}"><span>Профил</span></a>
+                        </li>
                         {% endif %}
                         <li>
-							<a href="{% url 'search' %}"><span>Търсене</span></a>
-						</li>
+                            <a href="{% url 'search' %}"><span>Търсене</span></a>
+                        </li>
                         {% if request.user.is_staff %}
-						<li>
-							<a href="/admin/"><span>Админ панел</span></a>
-						</li>
+                        <li>
+                            <a href="/admin/"><span>Админ панел</span></a>
+                        </li>
                         {% endif %}
-					</ul>
-				</div>
-			</div>
-		</div>
-		<div class="body">
-			<div class="contact">
-				<div>
-					{% block body %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="body">
+            <div class="contact">
+                <div>
+                    {% block body %}
                     Body goes here
                     {% endblock %}
-				</div>
-			</div>
-		</div>
-		<div class="footer">
-			<div>
-				<div>
-					<ul>
-						<li>
-							<a href="{% url 'index' %}">Начало</a>
-						</li>
-						<li>
-							<a href="{% url 'index' %}">Форум</a>
-						</li>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <div>
+                <div>
+                    <ul>
+                        <li>
+                            <a href="{% url 'index' %}">Начало</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'index' %}">Форум</a>
+                        </li>
                         {% if request.user.is_authenticated %}
-						<li>
-							<a href="{% url 'profile' %}">Профил</a>
-						</li>
+                        <li>
+                            <a href="{% url 'profile' %}">Профил</a>
+                        </li>
                         {% endif %}
                         <li>
-							<a href="{% url 'search' %}">Търсене</a>
-						</li>
+                            <a href="{% url 'search' %}">Търсене</a>
+                        </li>
                         {% if request.user.is_staff %}
-						<li>
-							<a href="/admin/"><span>Админ панел</span></a>
-						</li>
+                        <li>
+                            <a href="/admin/"><span>Админ панел</span></a>
+                        </li>
                         {% endif %}
-					</ul>
-					<p>
-						&#169; Copyright &#169; 2014.Fothon all rights reserved
-					</p>
-				</div>
-			</div>
-		</div>
+                    </ul>
+                    <p>
+                        &#169; Copyright &#169; 2014.Fothon all rights reserved
+                    </p>
+                </div>
+            </div>
+        </div>
         </div>
     </body>
 </html>
