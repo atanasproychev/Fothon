@@ -12,7 +12,6 @@ class ForumUser(User):
         ('F', 'Female'),
     )
 
-    picture = models.ImageField(blank=True, null=True)
     gender = models.CharField(max_length=1, choices=GENDERS, null=True, blank=True)
     city = models.CharField(max_length=50, null=True, blank=True)
     birth_date = models.DateField(null=True, blank=True)

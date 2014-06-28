@@ -14,25 +14,15 @@ class RegisterForm(forms.Form):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = ForumUser
-        fields = ['username', 'first_name', 'last_name', 'email', 'date_joined', 'picture', 'gender', 'city', 'birth_date']
+        fields = ['username', 'first_name', 'last_name', 'email', 'date_joined', 'gender', 'city', 'birth_date']
         
-    
 class ProfileChangeForm(forms.ModelForm):
     class Meta:
         model = ForumUser
-        fields = ['first_name', 'last_name', 'picture', 'gender', 'city', 'birth_date']
-    # username = forms.CharField(min_length=4)
-    # first_name = forms.CharField(min_length=4)
-    # last_name = forms.CharField(min_length=4)
-    # email = forms.EmailField()
-    # date_joined = forms.DateTimeField()
-    # picture = forms.ImageField()
-    # gender = forms.ChoiceField()
-    # city = forms.CharField()
-    # birth_date = forms.DateField()
+        fields = ['first_name', 'last_name', 'gender', 'city', 'birth_date']
     
 class NewContentForm(forms.Form):
-    content = forms.CharField(widget=forms.Textarea, min_length=1)
+    content = forms.CharField(widget=forms.Textarea(attrs={'rows': 2}), min_length=1)
     
 class SearchForm(forms.Form):
     types = [
