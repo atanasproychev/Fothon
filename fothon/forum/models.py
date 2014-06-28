@@ -6,13 +6,16 @@ TYPES = (
     ('R', 'Regular'),
     ('S', 'Special'),
 )
+
+
 class ForumUser(User):
     GENDERS = (
         ('M', 'Male'),
         ('F', 'Female'),
     )
 
-    gender = models.CharField(max_length=1, choices=GENDERS, null=True, blank=True)
+    gender = models.CharField(max_length=1, choices=GENDERS,
+                              null=True, blank=True)
     city = models.CharField(max_length=50, null=True, blank=True)
     birth_date = models.DateField(null=True, blank=True)
 
@@ -41,7 +44,7 @@ class Topic(models.Model):
 
     def posts(self):
         return len(self.post_set.values())
-    
+
     def __str__(self):
         return "{0} > {1}".format(self.category, self.title)
 
