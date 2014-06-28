@@ -80,3 +80,21 @@ class ForumViewsTestCase(TestCase):
         response = self.client.post("/fothon/register/", {'username': "specialuser", 'password': "password", 'email': "email@example.com"})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "already exists")
+        
+    def test_search_post(self):
+        topic = Topic.objects.get(pk=1)
+        user = ForumUser.objects.get(username="specialuser")
+        post = Post.objects.create(text="New text", author=user, topic=topic)
+        response = self.client.post("/fothon/search/", {'search_field': "text", 'type': "post", 'author_username': "", 'date_field': ""})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "text")
+        
+    def test_search_topic(self):
+        response = self.client.post("/fothon/search/", {'search_field': "Topic", 'type': "topic", 'author_username': "", 'date_field': ""})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "opic")
+        
+    def test_search_category(self):
+        response = self.client.post("/fothon/search/", {'search_field': "Second", 'type': "category", 'author_username': "", 'date_field': ""})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "cond")

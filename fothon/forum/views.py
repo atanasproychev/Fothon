@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 
 from django.contrib.auth import authenticate, login, logout
@@ -39,14 +39,14 @@ def make_paginator(request, objects, num_items):
 def category_view(request, category_id):
     topics = Topic.objects.filter(category_id=category_id).order_by('-last_modified')
     topics = make_paginator(request, topics, 20)
-    category = Category.objects.get(pk=category_id)
+    category = get_object_or_404(Category, pk=category_id)
     
     return render(request, 'category.html', locals())
     
 def topic_view(request, topic_id):
     posts = Post.objects.filter(topic_id=topic_id).order_by('created_at')
     posts = make_paginator(request, posts, 3)
-    topic = Topic.objects.get(pk=topic_id)
+    topic = get_object_or_404(Topic, pk=topic_id)
     
     return render(request, 'topic.html', locals())
     
@@ -58,12 +58,12 @@ def new_content_view(request, content_type, content_id):
         form = NewContentForm(request.POST)
         if form.is_valid():
             content = request.POST['content']
-            user = ForumUser.objects.get(username=request.user.username)
+            user = get_object_or_404(ForumUser, username=request.user.username)
             if content_type == 'topic':
                 Topic.objects.create(title=content, category_id=content_id, author=user, last_modified_from=user)
             elif content_type == 'post':
                 post = Post.objects.create(text=content, topic_id=content_id, author=user)
-                topic = Topic.objects.get(pk=content_id)
+                topic = get_object_or_404(Topic, pk=content_id)
                 topic.last_modified = post.created_at
                 topic.last_modified_from = post.author
                 topic.save()
@@ -74,6 +74,8 @@ def new_content_view(request, content_type, content_id):
     return render(request, 'new_content.html', locals())
     
 def login_view(request):
+    if request.user.is_authenticated():
+        return redirect('/fothon')
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -91,6 +93,8 @@ def login_view(request):
     return render(request, 'login.html', locals())
     
 def register_view(request):
+    if request.user.is_authenticated():
+        return redirect('/fothon')
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -100,7 +104,8 @@ def register_view(request):
             user_by_username = ForumUser.objects.filter(username=username)
             user_by_email = ForumUser.objects.filter(email=email)
             if not (user_by_username or user_by_email):
-                ForumUser.objects.create_user(username, email, password)
+                user = ForumUser.objects.create_user(username, email, password)
+                # login(request, user)
                 return redirect('/fothon')
             else:
                 return HttpResponse("Your username or email already exists!")
@@ -116,34 +121,29 @@ def logout_view(request):
 
 @login_required(login_url="/fothon/login")
 def profile_change_view(request):
-    u = ForumUser.objects.get(username=request.user.username)
+    user = get_object_or_404(ForumUser, username=request.user.username)
     if request.method == 'POST':
         form = ProfileChangeForm(request.POST)
         if form.is_valid():
-            username = request.POST['username']
-            password = request.POST['password']
-            email = request.POST['email']
-            #user = ForumUser.objects.get(username=username)
-            user = None
-            print(user2)
-            if user is None:
-                ForumUser.objects.create_user(username, email, password)
-                return redirect('/fothon')
-            else:
-                return HttpResponse("You are not registered!")
+            user.first_name = request.POST['first_name']
+            user.last_name = request.POST['last_name']
+            user.gender = request.POST['gender']
+            user.city = request.POST['city']
+            if request.POST['birth_date']:
+                user.birth_date = request.POST['birth_date']
+            user.save()
+            return redirect('/fothon/profile')
     else:
-        form = ProfileChangeForm(instance=u)
-        
-    print(form.as_p())
+        form = ProfileChangeForm(instance=user)
         
     return render(request, 'profile_change.html', locals())
     
 @login_required(login_url="/fothon/login")
 def profile_view(request, username=None):
     if not username:
-        user = request.user
+        user = get_object_or_404(ForumUser, username=request.user.username)
     else:
-        user = ForumUser.objects.get(username=username)
+        user = get_object_or_404(ForumUser, username=username)
         
     return render(request, 'profile.html', locals())
     
